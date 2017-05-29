@@ -98,13 +98,13 @@ else {
 }
 
 // db connection
-$sqlConnect = mysql_connect(
+$sqlConnect = mysqli_connect(
     $mod_cnf['dbhost'],
     $mod_cnf['dbuser'],
     $mod_cnf['dbpass']) OR die('error connecting to database.');
-mysql_select_db(
-    $mod_cnf['dbname'],
-    $sqlConnect) OR die('error selecting table.');
+mysqli_select_db(
+    $sqlConnect,
+    $mod_cnf['dbname']) OR die('error selecting table.');
 
 //** get number of needed script-calls, based on active items with valid seo-url. cms and categories will be added to first sitemap automatically.
 $cntCalls = ceil(getCountScriptCalls() / $mod_cnf['offset']);
@@ -205,6 +205,7 @@ exit(0);
 function getCategories()
 {
     global $mod_cnf;
+    global $sqlConnect;
     $list = array();
     $sql = "SELECT 
                 seo.oxseourl
@@ -221,8 +222,8 @@ function getCategories()
                 seo.oxlang = ".$mod_cnf['language']."               
             GROUP BY
                 oxcats.oxid;";
-    $sql_query = mysql_query($sql);
-    while ($sql_row = mysql_fetch_array($sql_query))
+    $sql_query = mysqli_query($sqlConnect,$sql);
+    while ($sql_row = mysqli_fetch_array($sql_query))
     {
         $list[] = array(
             'loc'           => $mod_cnf['siteurl'] . $sql_row['oxseourl'],
@@ -231,7 +232,7 @@ function getCategories()
             'changefreq'    => 'weekly',
         );
     }
-    mysql_free_result($sql_query);
+    mysqli_free_result($sql_query);
     return $list;
 }
 
@@ -241,6 +242,7 @@ function getCategories()
 function getCmsSite()
 {
     global $mod_cnf;
+    global $sqlConnect;
     $list = array();
     $sql = "SELECT
                 seo.oxseourl
@@ -258,8 +260,8 @@ function getCmsSite()
             GROUP BY
                 content.oxid;";
    
-    $sql_query = mysql_query($sql);
-    while ($sql_row = mysql_fetch_array($sql_query))
+    $sql_query = mysqli_query($sqlConnect,$sql);
+    while ($sql_row = mysqli_fetch_array($sql_query))
     {
         $list[] = array(
             'loc'           => $mod_cnf['siteurl'] . $sql_row['oxseourl'],
@@ -268,7 +270,7 @@ function getCmsSite()
             'changefreq'    => 'weekly',
         );
     }
-    mysql_free_result($sql_query);
+    mysqli_free_result($sql_query);
     return $list;
 }
 
@@ -278,6 +280,7 @@ function getCmsSite()
 function getVendors()
 {
     global $mod_cnf;
+    global $sqlConnect;
     $list = array();
     $sql = "SELECT
                 seo.oxseourl
@@ -294,8 +297,8 @@ function getVendors()
             GROUP BY
                 vendor.oxid;";
    
-    $sql_query = mysql_query($sql);
-    while ($sql_row = mysql_fetch_array($sql_query))
+    $sql_query = mysqli_query($sqlConnect,$sql);
+    while ($sql_row = mysqli_fetch_array($sql_query))
     {
         $list[] = array(
             'loc'           => $mod_cnf['siteurl'] . $sql_row['oxseourl'],
@@ -304,7 +307,7 @@ function getVendors()
             'changefreq'    => 'weekly',
         );
     }
-    mysql_free_result($sql_query);
+    mysqli_free_result($sql_query);
     return $list;
 }
 
@@ -314,6 +317,7 @@ function getVendors()
 function getManufacturers()
 {
     global $mod_cnf;
+    global $sqlConnect;
     $list = array();
     $sql = "SELECT
                 seo.oxseourl
@@ -330,8 +334,8 @@ function getManufacturers()
             GROUP BY
                 manufacturer.oxid;";
    
-    $sql_query = mysql_query($sql);
-    while ($sql_row = mysql_fetch_array($sql_query))
+    $sql_query = mysqli_query($sqlConnect,$sql);
+    while ($sql_row = mysqli_fetch_array($sql_query))
     {
         $list[] = array(
             'loc'           => $mod_cnf['siteurl'] . $sql_row['oxseourl'],
@@ -340,7 +344,7 @@ function getManufacturers()
             'changefreq'    => 'weekly',
         );
     }
-    mysql_free_result($sql_query);
+    mysqli_free_result($sql_query);
     return $list;
 }
 
@@ -350,6 +354,7 @@ function getManufacturers()
 function getTags()
 {
     global $mod_cnf;
+    global $sqlConnect;
     $list = array();
     $sql = "SELECT
                 seo.oxseourl
@@ -362,8 +367,8 @@ function getTags()
                 ".($mod_cnf['expired'] == true ? '': 'seo.oxexpired = 0 AND ')."
                 seo.oxlang = ".$mod_cnf['language'];
    
-    $sql_query = mysql_query($sql);
-    while ($sql_row = mysql_fetch_array($sql_query))
+    $sql_query = mysqli_query($sqlConnect,$sql);
+    while ($sql_row = mysqli_fetch_array($sql_query))
     {
         $list[] = array(
             'loc'           => $mod_cnf['siteurl'] . $sql_row['oxseourl'],
@@ -372,7 +377,7 @@ function getTags()
             'changefreq'    => 'weekly',
         );
     }
-    mysql_free_result($sql_query);
+    mysqli_free_result($sql_query);
     return $list;
 }
 
@@ -382,6 +387,7 @@ function getTags()
 function getStaticUrls()
 {
     global $mod_cnf;
+    global $sqlConnect;
     $list = array();
     $sql = "SELECT
                 seo.oxseourl
@@ -393,8 +399,8 @@ function getStaticUrls()
                 ".($mod_cnf['expired'] == true ? '': 'seo.oxexpired = 0 AND ')."
                 seo.oxlang = ".$mod_cnf['language'];
    
-    $sql_query = mysql_query($sql);
-    while ($sql_row = mysql_fetch_array($sql_query))
+    $sql_query = mysqli_query($sqlConnect,$sql);
+    while ($sql_row = mysqli_fetch_array($sql_query))
     {
         $list[] = array(
             'loc'           => $mod_cnf['siteurl'] . $sql_row['oxseourl'],
@@ -403,7 +409,7 @@ function getStaticUrls()
             'changefreq'    => 'weekly',
         );
     }
-    mysql_free_result($sql_query);
+    mysqli_free_result($sql_query);
     return $list;
 }
 
@@ -413,6 +419,7 @@ function getStaticUrls()
 function getProducts($limit)
 {
     global $mod_cnf;
+    global $sqlConnect;
     $list = array();
 
     // calculate offset
@@ -448,8 +455,8 @@ function getProducts($limit)
                 oxart.oxid
             LIMIT ".$start." OFFSET ".$end.";";
                        
-    $sql_query = mysql_query($sql);
-    while ($sql_row = mysql_fetch_array($sql_query))
+    $sql_query = mysqli_query($sqlConnect,$sql);
+    while ($sql_row = mysqli_fetch_array($sql_query))
     {
         $lastmod = $sql_row['oxtimestamp'];
         if ("0000-00-00 00:00:00" == $lastmod)
@@ -467,7 +474,7 @@ function getProducts($limit)
             'changefreq'    => 'daily',
         );
     }
-    mysql_free_result($sql_query);
+    mysqli_free_result($sql_query);
     return $list;
 }
 
@@ -477,11 +484,12 @@ function getProducts($limit)
 function getProductsManufacturer()
 {
     global $mod_cnf;
+    global $sqlConnect;
     $list = array();
                
     $sql = "SELECT
                 oxart.oxtimestamp,
-                seo.oxseourl,
+                seo.oxseourl
             FROM
                 oxarticles as oxart
             LEFT JOIN oxseo as seo
@@ -495,8 +503,9 @@ function getProductsManufacturer()
             GROUP BY
                 oxart.oxid";
                        
-    $sql_query = mysql_query($sql);
-    while ($sql_row = mysql_fetch_array($sql_query))
+    $sql_query = mysqli_query($sqlConnect,$sql);
+    
+    while ($sql_row = mysqli_fetch_array($sql_query))
     {
         $lastmod = $sql_row['oxtimestamp'];
         if ("0000-00-00 00:00:00" == $lastmod)
@@ -514,7 +523,7 @@ function getProductsManufacturer()
             'changefreq'    => 'daily',
         );
     }
-    mysql_free_result($sql_query);
+    mysqli_free_result($sql_query);
     return $list;
 }
 
@@ -524,6 +533,7 @@ function getProductsManufacturer()
 function getProductsVendor()
 {
     global $mod_cnf;
+    global $sqlConnect;
     $list = array();
                
     $sql = "SELECT
@@ -541,8 +551,8 @@ function getProductsVendor()
             GROUP BY
                 oxart.oxid";
                        
-    $sql_query = mysql_query($sql);
-    while ($sql_row = mysql_fetch_array($sql_query))
+    $sql_query = mysqli_query($sqlConnect,$sql);
+    while ($sql_row = mysqli_fetch_array($sql_query))
     {
         $lastmod = $sql_row['oxtimestamp'];
         if ("0000-00-00 00:00:00" == $lastmod)
@@ -560,7 +570,7 @@ function getProductsVendor()
             'changefreq'    => 'daily',
         );
     }
-    mysql_free_result($sql_query);
+    mysqli_free_result($sql_query);
     return $list;
 }
 
@@ -570,6 +580,7 @@ function getProductsVendor()
 function getCountScriptCalls()
 {
     global $mod_cnf;
+    global $sqlConnect;
     $sql = "SELECT
                 oxart.oxid
             FROM
@@ -589,8 +600,8 @@ function getCountScriptCalls()
                 seo.oxtype='oxarticle'
             GROUP BY
                 oxart.oxid;";
-    $query = mysql_query($sql);
-    return mysql_num_rows($query);
+    $query = mysqli_query($sqlConnect,$sql);
+    return mysqli_num_rows($query);
 }
 
 /** creates xml data / sitemap-content
